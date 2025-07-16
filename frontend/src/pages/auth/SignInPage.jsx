@@ -1,14 +1,16 @@
 import { useNavigate } from "react-router-dom";
-import { axiosInstance } from "../../api/axiosInstance";
+import {useEffect} from 'react'
 import { useAuth } from "../../context/AuthContext";
 import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import loginImage from "../../assets/login-image.png"; // Optional
+import loginImage from "../../assets/login-image.png";
+import { useSignIn } from "../../hooks/useSignIn";
 
 const SignInPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login,token } = useAuth();
+  const { mutate, isPending, error } = useSignIn(); // Mutation & loading/error
 
   const initialValues = { email: "", password: "" };
 
@@ -17,23 +19,29 @@ const SignInPage = () => {
     password: Yup.string().required("Password is required"),
   });
 
-  const handleSubmit = async (values, { setSubmitting, setStatus }) => {
-    try {
-      const res = await axiosInstance.post("/sign_in", values);
-      console.log(res.data.token)
-      login(res.data.token);
-      navigate("/dashboard");
-    } catch (err) {
-      setStatus(err.response?.data?.message || "Login failed");
-    } finally {
-      setSubmitting(false);
-    }
+  const handleSubmit = async (values, { setStatus }) => {
+    mutate(values, {
+      onSuccess: (data) => {
+        login(data.token);
+        navigate("/dashboard");
+      },
+      onError: (err) => {
+        const message =
+          err.response?.data?.message || "Sign in failed. Try again.";
+        setStatus(message);
+      },
+    });
   };
+
+   useEffect(() => {
+    if (token) {
+      navigate("/dashboard");
+    }
+  }, [token, navigate]);
 
   return (
     <Container fluid className="vh-100 p-0">
       <Row className="h-100 g-0">
-        {/* Left side */}
         <Col
           md={6}
           className="d-none d-md-flex align-items-center justify-content-center"
@@ -48,10 +56,9 @@ const SignInPage = () => {
           )}
         </Col>
 
-        {/* Right side */}
         <Col md={6} className="d-flex align-items-center justify-content-center">
           <div style={{ width: "100%", maxWidth: "400px", padding: "20px" }}>
-            <h2 className=" text-primary mb-4">Sign In</h2>
+            <h2 className="text-primary mb-4">Sign In</h2>
 
             <Formik
               initialValues={initialValues}
@@ -65,7 +72,6 @@ const SignInPage = () => {
                 values,
                 touched,
                 errors,
-                isSubmitting,
                 status,
               }) => (
                 <Form noValidate onSubmit={handleSubmit}>
@@ -105,12 +111,16 @@ const SignInPage = () => {
                     type="submit"
                     className="w-100"
                     style={{ backgroundColor: "#0b57d0", border: "none" }}
-                    disabled={isSubmitting}
+                    disabled={isPending}
                   >
-                    {isSubmitting ? "Signing In..." : "Sign In"}
+                    {isPending ? "Signing In..." : "Sign In"}
                   </Button>
 
-                  {status && <Alert variant="danger" className="mt-3">{status}</Alert>}
+                  {(status || error) && (
+                    <Alert variant="danger" className="mt-3">
+                      {status || error?.message}
+                    </Alert>
+                  )}
                 </Form>
               )}
             </Formik>
