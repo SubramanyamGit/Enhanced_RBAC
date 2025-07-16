@@ -1,0 +1,92 @@
+-- Create Database
+CREATE DATABASE IF NOT EXISTS enhanced_rbac;
+USE enhanced_rbac;
+
+-- USERS
+CREATE TABLE IF NOT EXISTS users (
+  user_id INT AUTO_INCREMENT PRIMARY KEY,
+  full_name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  user_status ENUM('Active', 'Inactive') DEFAULT 'Active',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- DEPARTMENTS
+CREATE TABLE IF NOT EXISTS departments (
+  department_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) UNIQUE NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ROLES
+CREATE TABLE IF NOT EXISTS roles (
+  role_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) UNIQUE NOT NULL,
+  department_id INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (department_id) REFERENCES departments(department_id) ON DELETE SET NULL
+);
+
+-- PERMISSIONS
+CREATE TABLE IF NOT EXISTS permissions (
+  permission_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) UNIQUE NOT NULL,
+  description TEXT
+);
+
+-- ROLE_PERMISSIONS (Many-to-Many: Role ↔ Permission)
+CREATE TABLE IF NOT EXISTS role_permissions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  role_id INT NOT NULL,
+  permission_id INT NOT NULL,
+  FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE,
+  FOREIGN KEY (permission_id) REFERENCES permissions(permission_id) ON DELETE CASCADE
+);
+
+-- USER_ROLES (Many-to-Many: User ↔ Role)
+CREATE TABLE IF NOT EXISTS user_roles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  role_id INT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE
+);
+
+-- USER_PERMISSIONS (JIT/Temporary Permissions)
+CREATE TABLE IF NOT EXISTS user_permissions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  permission_id INT NOT NULL,
+  granted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  expires_at TIMESTAMP NULL,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (permission_id) REFERENCES permissions(permission_id) ON DELETE CASCADE
+);
+
+-- PERMISSION REQUESTS (User → Admin Flow)
+CREATE TABLE IF NOT EXISTS permission_requests (
+  request_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  permission_id INT NOT NULL,
+  reason TEXT,
+  requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+  expires_at TIMESTAMP NULL,
+  reviewed_by INT,
+  reviewed_at TIMESTAMP NULL,
+  rejection_reason TEXT,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (permission_id) REFERENCES permissions(permission_id) ON DELETE CASCADE,
+  FOREIGN KEY (reviewed_by) REFERENCES users(user_id)
+);
+
+-- AUDIT LOGS
+CREATE TABLE IF NOT EXISTS audit_logs (
+  log_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT,
+  action_type VARCHAR(100),
+  action_details TEXT,
+  action_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+);
