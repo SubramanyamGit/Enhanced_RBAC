@@ -47,3 +47,26 @@
   width: 100%;
   overflow: hidden;
 }
+
+.custom-avatar-toggle {
+  background-color: white;
+  color: #17299c;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  outline: none;
+}
+
+/* Remove caret (default arrow) */
+.custom-avatar-toggle::after {
+  display: none !important;
+}
+

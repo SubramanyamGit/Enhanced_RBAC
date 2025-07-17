@@ -1,10 +1,13 @@
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise");
 
-const connection = mysql.createConnection({
+const connection = mysql.createPool({
   host: "localhost",
   user: "root",
   password: "Root@123",
   database: "enhanced_rbac",
+   waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 connection.connect;
