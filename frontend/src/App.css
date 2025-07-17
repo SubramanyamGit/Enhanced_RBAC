@@ -40,3 +40,132 @@
 .read-the-docs {
   color: #888;
 }
+.dashboard h2 {
+  font-weight: 600;
+  font-size: 1.75rem;
+}
+
+.card-body h5 {
+  font-weight: 600;
+}
+
+.card {
+  transition: all 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.nav-link:hover {
+  background-color: #e9ecef !important;
+  text-decoration: none;
+}
+
+.nav-link.active {
+  background-color: #e9ecef !important;
+  font-weight: 600;
+  color: #0b57d0 !important;
+}
+
+
+body.light-mode {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+body.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.sidebar {
+  width: 240px;
+  background-color: #0b57d0;
+  color: #fff;
+  min-height: 100vh;
+  padding: 1rem;
+}
+.sidebar .nav-link {
+  color: #ffffffcc;
+}
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+  background-color: #ffffff22;
+  border-radius: 8px;
+  color: #fff;
+}
+.sidebar h5 {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.navbar-custom {
+  background-color: #0b57d0;
+  color: #fff;
+  height: 60px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.navbar-custom .btn {
+  color: #fff;
+  border-color: #fff;
+}
+
+/* Theme Backgrounds */
+.sidebar {
+  background-color: #0b57d0;
+  color: white;
+  min-height: 100vh;
+  max-width: 240px;
+  transition: max-width 0.3s ease;
+  overflow-x: hidden;
+}
+
+.sidebar.collapsed {
+  max-width: 70px;
+}
+
+.sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.85);
+  padding-left: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+}
+
+.sidebar h5 {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.sidebar .collapse-toggle {
+  background: none;
+  border: none;
+  color: white;
+  margin-top: 1rem;
+  width: 100%;
+  text-align: center;
+}
+
+.navbar-custom {
+  background-color: #0b57d0;
+  color: white;
+  height: 60px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.sidebar {
+  min-height: 100vh;
+  max-width: 240px;
+  transition: max-width 0.3s ease;
+}
+.sidebar.collapsed {
+  max-width: 70px;
+}

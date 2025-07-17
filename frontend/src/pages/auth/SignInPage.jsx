@@ -9,7 +9,7 @@ import { useSignIn } from "../../hooks/useSignIn";
 
 const SignInPage = () => {
   const navigate = useNavigate();
-  const { login,token } = useAuth();
+  const { login,token,updateUser } = useAuth();
   const { mutate, isPending, error } = useSignIn(); // Mutation & loading/error
 
   const initialValues = { email: "", password: "" };
@@ -23,7 +23,8 @@ const SignInPage = () => {
     mutate(values, {
       onSuccess: (data) => {
         login(data.token);
-        navigate("/dashboard");
+        updateUser(data.user)
+        navigate("/admin/user");
       },
       onError: (err) => {
         const message =

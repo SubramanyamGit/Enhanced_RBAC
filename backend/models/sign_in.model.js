@@ -3,23 +3,28 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 module.exports = {
+  /**
+   * Handles user login: validates credentials and returns JWT.
+   * Full permission and menu data is handled separately in /users/my_permissions.
+   */
   signIn: (req, callback) => {
     const { email, password: inputPassword } = req.body;
-    console.log("Running")
+
+    // 1. Find user by email
     const userQuery = `
-      SELECT user_id, password, full_name, user_status 
+      SELECT user_id, password, full_name, user_status
       FROM users 
       WHERE email = ?
     `;
 
     sql.query(userQuery, [email], (err, results) => {
-      console.log("Results",results)
       if (err) return callback(err);
       if (!results.length) return callback({ message: "Invalid credentials" });
 
       const user = results[0];
+
+      // 2. Validate password and user status
       const isPasswordValid = bcrypt.compareSync(inputPassword, user.password);
-      console.log("isPasswordValid",isPasswordValid,inputPassword)
       if (user.user_status === "Inactive") {
         return callback({ message: "Account inactive. Contact admin." });
       }
@@ -27,39 +32,24 @@ module.exports = {
         return callback({ message: "Invalid credentials" });
       }
 
-      const permissionsQuery = `
-        SELECT DISTINCT p.name FROM permissions p
-        JOIN role_permissions rp ON p.permission_id = rp.permission_id
-        JOIN user_roles ur ON rp.role_id = ur.role_id
-        WHERE ur.user_id = ?
-        UNION
-        SELECT DISTINCT p.name FROM permissions p
-        JOIN user_permissions up ON p.permission_id = up.permission_id
-        WHERE up.user_id = ? AND (up.expires_at IS NULL OR up.expires_at > NOW())
-      `;
+      // 3. Generate JWT token (permissions will be fetched separately)
+      const token = jwt.sign(
+        {
+          user_id: user.user_id,
+          full_name: user.full_name,
+          email,
+        },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: "6h" }
+      );
 
-      sql.query(permissionsQuery, [user.user_id, user.user_id], (permErr, permResults) => {
-        if (permErr) return callback(permErr);
-
-        const permissions = permResults.map(p => p.name);
-        const token = jwt.sign(
-          {
-            user_id: user.user_id,
-            full_name: user.full_name,
-            email,
-          },
-          process.env.JWT_SECRET_KEY,
-          { expiresIn: "6h" }
-        );
-
-        callback(null, {
-          token,
-          user: {
-            full_name: user.full_name,
-            role: user.user_role,
-            permissions,
-          },
-        });
+      // 4. Return token and basic user info
+      callback(null, {
+        token,
+        user: {
+          full_name: user.full_name,
+          role: user.user_role,
+        },
       });
     });
   },
