@@ -1,8 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const usersController = require("../controllers/users.controller");
+const authenticate = require("../middlewares/auth.middleware");
 
-// 🔐 Fetch permissions + menu for signed-in user
+//Protect all routes below
+router.use(authenticate);
+
+//Fetch permissions + menu for signed-in user
 router.get("/my_permissions", usersController.getMyPermissions);
 
 // CRUD

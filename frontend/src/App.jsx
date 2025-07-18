@@ -7,6 +7,8 @@ import UsersPage from "./pages/users/UsersPage";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import { useEffect } from "react";
 import { useAuth } from "../src/context/AuthContext";
+import { useAxiosInterceptor } from "./hooks/useAxiosInterceptor";
+
 
 function App() {
   const { token } = useAuth();
@@ -17,6 +19,8 @@ function App() {
       navigate("/signin");
     }
   }, []);
+
+  useAxiosInterceptor();
 
   return (
     <Routes>

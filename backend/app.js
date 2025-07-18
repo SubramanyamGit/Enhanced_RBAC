@@ -8,6 +8,9 @@ const app = express();
 // Load environment variables
 dotenv.config();
 
+app.use(express.json());
+
+
 // Middleware
 app.use(express.json());
 app.use(cors({

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Table, Spinner, Form, Pagination, Button } from 'react-bootstrap';
-import { Pencil, Trash } from 'react-bootstrap-icons'; 
+import { Pencil, Trash } from 'react-bootstrap-icons';
 
 export default function CustomTable({
   columns = [],
@@ -11,6 +11,8 @@ export default function CustomTable({
   onEdit = () => {},
   onDelete = () => {},
   showActions = false,
+  showEdit = true,
+  showDelete = true,
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
@@ -68,20 +70,20 @@ export default function CustomTable({
                 {col.header}
               </th>
             ))}
-            {showActions && <th>Actions</th>}
+            {showActions && (showEdit || showDelete) && <th>Actions</th>}
           </tr>
         </thead>
         <tbody>
           {isLoading ? (
             <tr>
-              <td colSpan={columns.length + (showActions ? 1 : 0)} className="text-center py-4">
+              <td colSpan={columns.length + 1} className="text-center py-4">
                 <Spinner animation="border" size="sm" className="me-2" />
                 Loading...
               </td>
             </tr>
           ) : paginatedData.length === 0 ? (
             <tr>
-              <td colSpan={columns.length + (showActions ? 1 : 0)} className="text-center text-muted py-4">
+              <td colSpan={columns.length + 1} className="text-center text-muted py-4">
                 {emptyMessage}
               </td>
             </tr>
@@ -95,14 +97,18 @@ export default function CustomTable({
                       : row[col.accessor];
                   return <td key={colIndex}>{value}</td>;
                 })}
-                {showActions && (
+                {showActions && (showEdit || showDelete) && (
                   <td>
-                    <Button variant="outline-primary" size="sm" className="me-2" onClick={() => onEdit(row)}>
-                      <Pencil size={16} />
-                    </Button>
-                    <Button variant="outline-danger" size="sm" onClick={() => onDelete(row)}>
-                      <Trash size={16} />
-                    </Button>
+                    {showEdit && (
+                      <Button variant="outline-primary" size="sm" className="me-2" onClick={() => onEdit(row)}>
+                        <Pencil size={16} />
+                      </Button>
+                    )}
+                    {showDelete && (
+                      <Button variant="outline-danger" size="sm" onClick={() => onDelete(row)}>
+                        <Trash size={16} />
+                      </Button>
+                    )}
                   </td>
                 )}
               </tr>

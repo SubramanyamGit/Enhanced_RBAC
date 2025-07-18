@@ -1,39 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CustomTable from '../../components/CustomTable';
-import { Spinner, Alert } from 'react-bootstrap';
-import { useUsers } from '../../hooks/useUsers';
+import { Spinner, Alert, Button } from 'react-bootstrap';
+import { useUsers, useDeleteUser } from '../../hooks/useUsers';
 import { useAuth } from '../../context/AuthContext';
+import AddUserModal from '../../components/users/AddUserModal';
+import EditUserModal from '../../components/users/EditUserModal';
 
 const UsersPage = () => {
-  const { data: users = [], isLoading, error } = useUsers();
+  const { data: users = [], isLoading, error, refetch } = useUsers();
   const { user } = useAuth();
-  console.log(user);
-  
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editUser, setEditUser] = useState(null);
+  const deleteUserMutation = useDeleteUser();
+
   const canEdit = user?.permissions?.users?.includes('edit_users');
   const canDelete = user?.permissions?.users?.includes('delete_users');
+  const canCreate = user?.permissions?.users?.includes('create_users');
+console.log(canDelete);
 
   const columns = [
     { header: 'Name', accessor: 'full_name' },
     { header: 'Email', accessor: 'email' },
     { header: 'Role', accessor: 'roles' },
-    { header: 'Status', accessor: 'user_status' }
+    { header: 'Status', accessor: 'user_status' },
   ];
 
   const handleEdit = (row) => {
-    console.log('Edit user:', row);
-    // Open modal or route to edit form
+    setEditUser(row);
   };
 
-  const handleDelete = (row) => {
+  const handleDelete = async (row) => {
+    console.log("DELETE")
     if (window.confirm(`Are you sure you want to delete ${row.full_name}?`)) {
-      console.log('Delete user:', row);
-      // Call mutation to delete user
+      try {
+        await deleteUserMutation.mutateAsync(row.user_id);
+        refetch();
+      } catch (err) {
+        alert('Failed to delete user');
+      }
     }
   };
 
   return (
     <div className="p-4">
-      <h3 className="mb-4">Users</h3>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h3 className="mb-0">Users</h3>
+        {canCreate && (
+          <Button onClick={() => setShowAddModal(true)} variant="primary">
+            + Add User
+          </Button>
+        )}
+      </div>
 
       {error ? (
         <Alert variant="danger">Failed to load users.</Alert>
@@ -43,11 +60,33 @@ const UsersPage = () => {
           data={users}
           isLoading={isLoading}
           itemsPerPage={5}
-          showActions={canEdit || canDelete}
-          onEdit={canEdit ? handleEdit : undefined}
-          onDelete={canDelete ? handleDelete : undefined}
+          showActions={true}
+          showEdit={canEdit}
+          showDelete={false}
+          onEdit={handleEdit}
+
+          // onDelete={canDelete ? handleDelete : undefined}
         />
       )}
+
+      <AddUserModal
+        show={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSuccess={() => {
+          setShowAddModal(false);
+          refetch();
+        }}
+      />
+
+      <EditUserModal
+        show={!!editUser}
+        user={editUser}
+        onClose={() => setEditUser(null)}
+        onSuccess={() => {
+          setEditUser(null);
+          refetch();
+        }}
+      />
     </div>
   );
 };

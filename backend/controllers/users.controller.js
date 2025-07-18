@@ -56,22 +56,29 @@ exports.createUser = async (req, res) => {
   }
 };
 
-// PUT update user
 exports.updateUser = async (req, res) => {
+  const { id } = req.params;
+  const { full_name, password, role_id, user_status } = req.body;
+
   try {
-    await userModel.update(req.params.id, req.body);
-    res.json({ message: "User updated" });
+    await userModel.updateUser(
+      id,
+      { full_name, password, user_status },
+      role_id
+    );
+    res.json({ success: true });
   } catch (err) {
     console.error("Update User Error:", err);
     res.status(500).json({ error: "Failed to update user" });
   }
 };
 
-// DELETE user
 exports.deleteUser = async (req, res) => {
+  const { user_id } = req.params;
+
   try {
-    await userModel.delete(req.params.id);
-    res.json({ message: "User deleted" });
+    await userModel.deleteUser(user_id);
+    res.json({ success: true });
   } catch (err) {
     console.error("Delete User Error:", err);
     res.status(500).json({ error: "Failed to delete user" });
