@@ -34,18 +34,59 @@ export default function CustomTable({
     return filteredData.slice(start, start + itemsPerPage);
   }, [page, filteredData, itemsPerPage]);
 
-  const renderPagination = () => {
-    if (totalPages <= 1) return null;
-    return (
-      <Pagination className="mt-3 justify-content-center">
-        {[...Array(totalPages)].map((_, i) => (
-          <Pagination.Item key={i} active={i + 1 === page} onClick={() => setPage(i + 1)}>
-            {i + 1}
-          </Pagination.Item>
-        ))}
-      </Pagination>
+const renderPagination = () => {
+  if (totalPages <= 1) return null;
+
+  const paginationItems = [];
+
+  // If 3 or fewer pages, show page numbers only (no arrows)
+  if (totalPages <= 3) {
+    for (let i = 1; i <= totalPages; i++) {
+      paginationItems.push(
+        <Pagination.Item key={i} active={i === page} onClick={() => setPage(i)}>
+          {i}
+        </Pagination.Item>
+      );
+    }
+    return <Pagination className="mt-3 justify-content-end">{paginationItems}</Pagination>;
+  }
+
+  // More than 3 pages: show arrows + sliding window
+  paginationItems.push(
+    <Pagination.Prev
+      key="prev"
+      disabled={page === 1}
+      onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+    />
+  );
+
+  let start = Math.max(1, page - 1);
+  let end = Math.min(totalPages, start + 2);
+
+  if (end - start < 2) {
+    start = Math.max(1, end - 2);
+  }
+
+  for (let i = start; i <= end; i++) {
+    paginationItems.push(
+      <Pagination.Item key={i} active={i === page} onClick={() => setPage(i)}>
+        {i}
+      </Pagination.Item>
     );
-  };
+  }
+
+  paginationItems.push(
+    <Pagination.Next
+      key="next"
+      disabled={page === totalPages}
+      onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+    />
+  );
+
+  return <Pagination className="mt-3 justify-content-end">{paginationItems}</Pagination>;
+};
+
+
 
   return (
     <div className="table-responsive">

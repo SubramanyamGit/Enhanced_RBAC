@@ -14,7 +14,7 @@ export const useUsers = () => {
 export const useUpdateUser = () => {
   return useMutation({
     mutationFn: async ({ user_id, data }) => {
-      const res = await axiosInstanceWithToken.put(`/users/${user_id}`, data);
+      const res = await axiosInstanceWithToken.patch(`/users/${user_id}`, data);
       return res.data;
     },
   });

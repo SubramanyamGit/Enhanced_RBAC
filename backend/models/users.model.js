@@ -3,84 +3,178 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 /** Groups permissions logically */
-const groupPermissions = (permissions) => {
-  const grouped = {
-    users: [],
-    roles: [],
-    approvals: [],
-  };
+// const groupPermissions = (permissions) => {
+//   const grouped = {
+//     users: [],
+//     roles: [],
+//     approvals: [],
+//     departments:[],
+//   };
+//   permissions.forEach((perm) => {
+//     if (perm.includes("user")) grouped.users.push(perm);
+//     else if (perm.includes("role")) grouped.roles.push(perm);
+//     else if (perm.includes("approve")) grouped.approvals.push(perm);
+//     else if (perm.includes("department")) grouped.departments.push(perm);
+//     else {
+//       if (!grouped.misc) grouped.misc = [];
+//       grouped.misc.push(perm);
+//     }
+//   });
+//   return grouped;
+// };
+
+/** Groups permissions based on menu_keys dynamically */
+const groupPermissions = (permissions, menuKeys) => {
+  const grouped = {};
+
+  // Initialize each menu_key group
+  menuKeys.forEach((key) => {
+    grouped[key] = [];
+  });
+
+  // Assign permissions to the appropriate group
   permissions.forEach((perm) => {
-    if (perm.includes("user")) grouped.users.push(perm);
-    else if (perm.includes("role")) grouped.roles.push(perm);
-    else if (perm.includes("approve")) grouped.approvals.push(perm);
-    else {
+    const matchedKey = menuKeys.find((key) => perm.includes(key));
+    if (matchedKey) {
+      grouped[matchedKey].push(perm);
+    } else {
       if (!grouped.misc) grouped.misc = [];
       grouped.misc.push(perm);
     }
   });
+
   return grouped;
 };
 
+
 module.exports = {
   // Get permissions + menu from token
-  getUserPermissions: async (token) => {
-    if (!token) throw new Error("Unauthorized");
+  // getUserPermissions: async (token) => {
+  //   if (!token) throw new Error("Unauthorized");
 
-    let payload;
-    try {
-      payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    } catch (err) {
-      throw new Error("Invalid token");
-    }
+  //   let payload;
+  //   try {
+  //     payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+  //   } catch (err) {
+  //     throw new Error("Invalid token");
+  //   }
 
-    const userId = payload.user_id;
+  //   const userId = payload.user_id;
 
-    // 1. Fetch distinct permissions from roles + JIT permissions
-    const [permResults] = await sql.query(
-      `
-    SELECT DISTINCT p.name FROM permissions p
+  //   // 1. Fetch distinct permissions from roles + JIT permissions
+  //   const [permResults] = await sql.query(
+  //     `
+  //   SELECT DISTINCT p.name FROM permissions p
+  //   JOIN role_permissions rp ON p.permission_id = rp.permission_id
+  //   JOIN user_roles ur ON rp.role_id = ur.role_id
+  //   WHERE ur.user_id = ?
+  //   UNION
+  //   SELECT DISTINCT p.name FROM permissions p
+  //   JOIN user_permissions up ON p.permission_id = up.permission_id
+  //   WHERE up.user_id = ? AND (up.expires_at IS NULL OR up.expires_at > NOW())
+  // `,
+  //     [userId, userId]
+  //   );
+
+  //   const permissionNames = permResults.map((p) => p.name);
+  //   const groupedPermissions = groupPermissions(permissionNames); // { users: [...], roles: [...], etc. }
+
+  //   // 2. Fetch menus by permission match (we just need keys)
+  //   const [menuResults] = await sql.query(
+  //     `
+  //   SELECT DISTINCT m.id, m.label, m.route, m.menu_key
+  //   FROM menus m
+  //   JOIN menu_permissions mp ON m.id = mp.menu_id
+  //   WHERE mp.permission_name IN (?)
+  // `,
+  //     [permissionNames]
+  //   );
+
+  //   const menu = menuResults.map((menuItem) => {
+  //     const key = menuItem.menu_key;
+  //     return {
+  //       label: menuItem.label,
+  //       key: key,
+  //       route: menuItem.route,
+  //       permissions: groupedPermissions[key] || [],
+  //     };
+  //   });
+
+  //   return {
+  //     full_name: payload.full_name,
+  //     role: payload.role,
+  //     permissions: groupedPermissions,
+  //     menu,
+  //   };
+  // },
+getUserPermissions: async (token) => {
+  if (!token) throw new Error("Unauthorized");
+
+  let payload;
+  try {
+    payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+  } catch (err) {
+    throw new Error("Invalid token");
+  }
+
+  const userId = payload.user_id;
+
+  // 1. Fetch all permission names the user has via roles and direct assignments
+  const [permResults] = await sql.query(
+    `
+    SELECT DISTINCT p.permission_id, p.name 
+    FROM permissions p
     JOIN role_permissions rp ON p.permission_id = rp.permission_id
     JOIN user_roles ur ON rp.role_id = ur.role_id
     WHERE ur.user_id = ?
     UNION
-    SELECT DISTINCT p.name FROM permissions p
+    SELECT DISTINCT p.permission_id, p.name 
+    FROM permissions p
     JOIN user_permissions up ON p.permission_id = up.permission_id
     WHERE up.user_id = ? AND (up.expires_at IS NULL OR up.expires_at > NOW())
   `,
-      [userId, userId]
-    );
+    [userId, userId]
+  );
 
-    const permissionNames = permResults.map((p) => p.name);
-    const groupedPermissions = groupPermissions(permissionNames); // { users: [...], roles: [...], etc. }
+  const permissionNames = permResults.map((p) => p.name);
+  const permissionIds = permResults.map((p) => p.permission_id);
 
-    // 2. Fetch menus by permission match (we just need keys)
-    const [menuResults] = await sql.query(
-      `
+  // 2. Fetch all menu_keys from menus table
+  const [menuKeyResults] = await sql.query(`SELECT DISTINCT menu_key FROM menus`);
+  const allMenuKeys = menuKeyResults.map((m) => m.menu_key);
+
+  // 3. Group permissions dynamically
+  const groupedPermissions = groupPermissions(permissionNames, allMenuKeys);
+
+  // 4. Fetch menus accessible by those permissions (join using permission_id now)
+  const [menuResults] = await sql.query(
+    `
     SELECT DISTINCT m.id, m.label, m.route, m.menu_key
     FROM menus m
     JOIN menu_permissions mp ON m.id = mp.menu_id
-    WHERE mp.permission_name IN (?)
+    WHERE mp.permission_id IN (?)
   `,
-      [permissionNames]
-    );
+    [permissionIds]
+  );
 
-    const menu = menuResults.map((menuItem) => {
-      const key = menuItem.menu_key;
-      return {
-        label: menuItem.label,
-        key: key,
-        route: menuItem.route,
-        permissions: groupedPermissions[key] || [],
-      };
-    });
-
+  const menu = menuResults.map((menuItem) => {
+    const key = menuItem.menu_key;
     return {
-      full_name: payload.full_name,
-      role: payload.role,
-      permissions: groupedPermissions,
-      menu,
+      label: menuItem.label,
+      key: key,
+      route: menuItem.route,
+      permissions: groupedPermissions[key] || [],
     };
-  },
+  });
+
+  return {
+    full_name: payload.full_name,
+    role: payload.role,
+    permissions: groupedPermissions,
+    menu,
+  };
+},
+
   // Create user and assign role
   createUserWithRole: async (userData, roleId) => {
     const conn = await sql.getConnection();

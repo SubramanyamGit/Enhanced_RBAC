@@ -2,13 +2,14 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import SignInPage from "./pages/auth/SignInPage";
 import AppLayout from "./components/AppLayout";
 import UsersPage from "./pages/users/UsersPage";
-// import RolesPage from "./pages/admin/RolesPage";
+import RolesPage from "./pages/roles/RolesPage";
 // import ApprovalsPage from "./pages/admin/ApprovalsPage";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import { useEffect } from "react";
 import { useAuth } from "../src/context/AuthContext";
 import { useAxiosInterceptor } from "./hooks/useAxiosInterceptor";
-
+import DepartmentsPage from "./pages/departments/DepartmentsPage";
+import PermissionsPage from "./pages/permissions/PermissionsPage";
 
 function App() {
   const { token } = useAuth();
@@ -30,6 +31,10 @@ function App() {
       <Route path="/" element={<AppLayout />}>
         {/* Admin-only routes */}
         <Route path="admin/users" element={<UsersPage />} />
+        <Route path="admin/departments" element={<DepartmentsPage />} />
+        <Route path="admin/roles" element={<RolesPage />} />
+        <Route path="permissions" element={<PermissionsPage />} />
+
         <Route path="dashboard" element={<DashboardPage />} />
 
         {/* Regular user routes */}
