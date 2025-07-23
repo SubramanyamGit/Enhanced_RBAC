@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import CustomTable from '../../components/CustomTable';
 import { Spinner, Alert, Button } from 'react-bootstrap';
+import dayjs from 'dayjs';
 import { useUsers, useDeleteUser } from '../../hooks/useUsers';
 import { useAuth } from '../../context/AuthContext';
 import AddUserModal from '../../components/users/AddUserModal';
@@ -23,6 +24,10 @@ console.log(canDelete);
     { header: 'Email', accessor: 'email' },
     { header: 'Role', accessor: 'roles' },
     { header: 'Status', accessor: 'user_status' },
+     {
+          header: 'Created At',
+          accessor: row => dayjs(row.created_at).format('MMM D, YYYY h:mm A'),
+        },
   ];
 
   const handleEdit = (row) => {

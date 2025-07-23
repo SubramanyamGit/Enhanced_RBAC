@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import AddPermissionModal from '../../components/permissions/AddPermissionModal';
 import EditPermissionModal from '../../components/permissions/EditPermissionModal';
 import { toast } from 'react-toastify';
+import dayjs from 'dayjs';
 
 const PermissionsPage = () => {
   const { data: permissions = [], isLoading, error, refetch } = usePermissions();
@@ -22,6 +23,14 @@ const PermissionsPage = () => {
   const columns = [
     { header: 'Permission Name', accessor: 'name' },
     { header: 'Description', accessor: 'description' },
+ {
+      header: 'Created At',
+      accessor: row => dayjs(row.created_at).format('MMM D, YYYY h:mm A'),
+    },
+    {
+      header: 'Updated At',
+      accessor: row => dayjs(row.updated_at).format('MMM D, YYYY h:mm A'),
+    },
   ];
 
   const handleEdit = (permission) => setEditPermission(permission);

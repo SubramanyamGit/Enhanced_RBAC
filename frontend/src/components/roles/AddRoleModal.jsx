@@ -104,6 +104,7 @@ const AddRoleModal = ({ show, onClose, onSuccess }) => {
               onChange={(selected) => formik.setFieldValue('permission_ids', selected)}
               value={formik.values.permission_ids}
               onBlur={() => formik.setFieldTouched('permission_ids', true)}
+                            closeMenuOnSelect={false}
             />
             {formik.touched.permission_ids && formik.errors.permission_ids && (
               <div className="text-danger mt-1">{formik.errors.permission_ids}</div>

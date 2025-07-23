@@ -7,17 +7,14 @@ const adminOnly = require("../middlewares/adminOnly.middleware");
 //Protect all routes below
 router.use(authenticate);
 
-// All user routes are admin-only
-router.use(adminOnly); 
-
 //Fetch permissions + menu for signed-in user
 router.get("/my_permissions", usersController.getMyPermissions);
 
 // CRUD
-router.get("/", usersController.getUsers);
+router.get("/", adminOnly, usersController.getUsers);
 router.get("/:id", usersController.getUserById);
-router.post("/", usersController.createUser);
-router.patch("/:id", usersController.updateUser);
-router.delete("/:id", usersController.deleteUser);
+router.post("/", adminOnly, usersController.createUser);
+router.patch("/:id", adminOnly, usersController.updateUser);
+router.delete("/:id", adminOnly, usersController.deleteUser);
 
 module.exports = router;

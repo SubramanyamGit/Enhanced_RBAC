@@ -10,6 +10,7 @@ import { useAuth } from "../src/context/AuthContext";
 import { useAxiosInterceptor } from "./hooks/useAxiosInterceptor";
 import DepartmentsPage from "./pages/departments/DepartmentsPage";
 import PermissionsPage from "./pages/permissions/PermissionsPage";
+import MenuPage from "./pages/menu/MenuPage";
 
 function App() {
   const { token } = useAuth();
@@ -33,6 +34,7 @@ function App() {
         <Route path="admin/users" element={<UsersPage />} />
         <Route path="admin/departments" element={<DepartmentsPage />} />
         <Route path="admin/roles" element={<RolesPage />} />
+        <Route path="admin/menus" element={<MenuPage />} />
         <Route path="permissions" element={<PermissionsPage />} />
 
         <Route path="dashboard" element={<DashboardPage />} />

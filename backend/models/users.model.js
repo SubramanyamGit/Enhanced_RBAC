@@ -48,65 +48,7 @@ const groupPermissions = (permissions, menuKeys) => {
 
 
 module.exports = {
-  // Get permissions + menu from token
-  // getUserPermissions: async (token) => {
-  //   if (!token) throw new Error("Unauthorized");
 
-  //   let payload;
-  //   try {
-  //     payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
-  //   } catch (err) {
-  //     throw new Error("Invalid token");
-  //   }
-
-  //   const userId = payload.user_id;
-
-  //   // 1. Fetch distinct permissions from roles + JIT permissions
-  //   const [permResults] = await sql.query(
-  //     `
-  //   SELECT DISTINCT p.name FROM permissions p
-  //   JOIN role_permissions rp ON p.permission_id = rp.permission_id
-  //   JOIN user_roles ur ON rp.role_id = ur.role_id
-  //   WHERE ur.user_id = ?
-  //   UNION
-  //   SELECT DISTINCT p.name FROM permissions p
-  //   JOIN user_permissions up ON p.permission_id = up.permission_id
-  //   WHERE up.user_id = ? AND (up.expires_at IS NULL OR up.expires_at > NOW())
-  // `,
-  //     [userId, userId]
-  //   );
-
-  //   const permissionNames = permResults.map((p) => p.name);
-  //   const groupedPermissions = groupPermissions(permissionNames); // { users: [...], roles: [...], etc. }
-
-  //   // 2. Fetch menus by permission match (we just need keys)
-  //   const [menuResults] = await sql.query(
-  //     `
-  //   SELECT DISTINCT m.id, m.label, m.route, m.menu_key
-  //   FROM menus m
-  //   JOIN menu_permissions mp ON m.id = mp.menu_id
-  //   WHERE mp.permission_name IN (?)
-  // `,
-  //     [permissionNames]
-  //   );
-
-  //   const menu = menuResults.map((menuItem) => {
-  //     const key = menuItem.menu_key;
-  //     return {
-  //       label: menuItem.label,
-  //       key: key,
-  //       route: menuItem.route,
-  //       permissions: groupedPermissions[key] || [],
-  //     };
-  //   });
-
-  //   return {
-  //     full_name: payload.full_name,
-  //     role: payload.role,
-  //     permissions: groupedPermissions,
-  //     menu,
-  //   };
-  // },
 getUserPermissions: async (token) => {
   if (!token) throw new Error("Unauthorized");
 
@@ -119,7 +61,7 @@ getUserPermissions: async (token) => {
 
   const userId = payload.user_id;
 
-  // 1. Fetch all permission names the user has via roles and direct assignments
+  // 1. Fetch all permission names and IDs from roles + user_permissions
   const [permResults] = await sql.query(
     `
     SELECT DISTINCT p.permission_id, p.name 
@@ -139,14 +81,32 @@ getUserPermissions: async (token) => {
   const permissionNames = permResults.map((p) => p.name);
   const permissionIds = permResults.map((p) => p.permission_id);
 
-  // 2. Fetch all menu_keys from menus table
+  // 2. Fetch all menu_keys from the menus table
   const [menuKeyResults] = await sql.query(`SELECT DISTINCT menu_key FROM menus`);
   const allMenuKeys = menuKeyResults.map((m) => m.menu_key);
 
-  // 3. Group permissions dynamically
+  // 3. Group permissions logically based on menu_key
   const groupedPermissions = groupPermissions(permissionNames, allMenuKeys);
 
-  // 4. Fetch menus accessible by those permissions (join using permission_id now)
+  // ✅ 4. Filter out empty groups
+  const filteredGroupedPermissions = {};
+  for (const [key, perms] of Object.entries(groupedPermissions)) {
+    if (Array.isArray(perms) && perms.length > 0) {
+      filteredGroupedPermissions[key] = perms;
+    }
+  }
+
+  // ✅ 5. Exit early if no permissions
+  if (!permissionIds.length) {
+    return {
+      full_name: payload.full_name,
+      role: payload.role,
+      permissions: {},
+      menu: [],
+    };
+  }
+
+  // ✅ 6. Fetch all menus with matching permissions
   const [menuResults] = await sql.query(
     `
     SELECT DISTINCT m.id, m.label, m.route, m.menu_key
@@ -157,23 +117,27 @@ getUserPermissions: async (token) => {
     [permissionIds]
   );
 
-  const menu = menuResults.map((menuItem) => {
-    const key = menuItem.menu_key;
-    return {
-      label: menuItem.label,
-      key: key,
-      route: menuItem.route,
-      permissions: groupedPermissions[key] || [],
-    };
-  });
+  // ✅ 7. Only return menus that have matching permissions
+  const menu = menuResults
+    .filter((menuItem) => filteredGroupedPermissions[menuItem.menu_key]?.length > 0)
+    .map((menuItem) => {
+      const key = menuItem.menu_key;
+      return {
+        label: menuItem.label,
+        key: key,
+        route: menuItem.route,
+        permissions: filteredGroupedPermissions[key],
+      };
+    });
 
   return {
     full_name: payload.full_name,
     role: payload.role,
-    permissions: groupedPermissions,
+    permissions: filteredGroupedPermissions,
     menu,
   };
 },
+
 
   // Create user and assign role
   createUserWithRole: async (userData, roleId) => {

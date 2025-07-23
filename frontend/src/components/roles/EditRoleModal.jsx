@@ -1,52 +1,82 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Spinner } from "react-bootstrap";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useUpdateRole } from "../../hooks/useRoles";
 import { toast } from "react-toastify";
 import { useDepartments } from "../../hooks/useDepartments";
+import { usePermissions } from "../../hooks/usePermissions";
+import Select from "react-select";
 
 const EditRoleModal = ({ show, role, onClose, onSuccess }) => {
   const updateRole = useUpdateRole();
   const { data: departments = [] } = useDepartments();
+  const { data: permissions = [] } = usePermissions();
+
+  const [assignedPermissions, setAssignedPermissions] = useState([]);
+  const [unassignedPermissions, setUnassignedPermissions] = useState([]);
+  const [permissionOptions, setPermissionOptions] = useState([]);
+
+  useEffect(() => {
+    if (permissions && role?.permission_ids) {
+      const assigned = permissions.filter(p =>
+        role.permission_ids.includes(p.permission_id)
+      );
+      const unassigned = permissions.filter(p =>
+        !role.permission_ids.includes(p.permission_id)
+      );
+
+      setAssignedPermissions(
+        assigned.map(p => ({ value: p.permission_id, label: p.name }))
+      );
+      setUnassignedPermissions(
+        unassigned.map(p => ({ value: p.permission_id, label: p.name }))
+      );
+
+      setPermissionOptions(
+        permissions.map(p => ({ value: p.permission_id, label: p.name }))
+      );
+    }
+  }, [permissions, role]);
 
   const formik = useFormik({
     initialValues: {
       name: "",
       department_id: "",
+      grant_permissions: [],
+      revoke_permissions: [],
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Role name is required"),
       department_id: Yup.string().required("Department is required"),
     }),
     onSubmit: async (values) => {
-      if (
-        values.name === role.name &&
-        String(values.department_id) === String(role.department_id)
-      ) {
-        toast.info("No changes found");
-        return;
-      }
-
       try {
         await updateRole.mutateAsync({
           role_id: role.role_id,
-          data: values,
+          data: {
+            name: values.name,
+            department_id: values.department_id,
+            grant_permissions: values.grant_permissions.map(p => p.value),
+            revoke_permissions: values.revoke_permissions.map(p => p.value),
+          },
         });
         toast.success("Role updated successfully");
         onSuccess();
-      } catch (err) {
+      } catch {
         toast.error("Failed to update role");
       }
     },
     enableReinitialize: true,
   });
-  
+
   useEffect(() => {
     if (role) {
       formik.setValues({
         name: role.name || "",
         department_id: role.department_id || "",
+        grant_permissions: [],
+        revoke_permissions: [],
       });
     }
   }, [role]);
@@ -94,6 +124,32 @@ const EditRoleModal = ({ show, role, onClose, onSuccess }) => {
             <Form.Control.Feedback type="invalid">
               {formik.errors.department_id}
             </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mt-3">
+            <Form.Label>Revoke Permissions</Form.Label>
+            <Select
+              isMulti
+              options={assignedPermissions}
+              value={formik.values.revoke_permissions}
+              onChange={(selected) =>
+                formik.setFieldValue("revoke_permissions", selected)
+              }
+              closeMenuOnSelect={false}
+            />
+          </Form.Group>
+
+          <Form.Group className="mt-3">
+            <Form.Label>Grant Permissions</Form.Label>
+            <Select
+              isMulti
+              options={unassignedPermissions}
+              value={formik.values.grant_permissions}
+              onChange={(selected) =>
+                formik.setFieldValue("grant_permissions", selected)
+              }
+              closeMenuOnSelect={false}
+            />
           </Form.Group>
 
           <Button

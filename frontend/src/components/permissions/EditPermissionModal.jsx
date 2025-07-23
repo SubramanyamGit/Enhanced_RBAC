@@ -7,11 +7,12 @@ import { toast } from 'react-toastify';
 
 const EditPermissionModal = ({ show, permission, onClose, onSuccess }) => {
   const updatePermission = useUpdatePermission();
+console.log("permos",permission);
 
   const formik = useFormik({
     initialValues: {
-      name: permission?.permission_name || '',
-      description: permission?.permission_description || '',
+      name: permission?.name || '',
+      description: permission?.description || '',
     },
     enableReinitialize: true,
     validationSchema: Yup.object({

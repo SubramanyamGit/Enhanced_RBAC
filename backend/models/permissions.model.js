@@ -14,7 +14,7 @@ module.exports = {
 
   create: async ({ name, description }) => {
     const [result] = await sql.query(
-      `INSERT INTO permissions (permission_name, permission_description) VALUES (?, ?)`,
+      `INSERT INTO permissions (name, description) VALUES (?, ?)`,
       [name, description]
     );
     return { permission_id: result.insertId };
@@ -22,7 +22,7 @@ module.exports = {
 
   update: async (id, { name, description }) => {
     await sql.query(
-      `UPDATE permissions SET permission_name = ?, permission_description = ? WHERE permission_id = ?`,
+      `UPDATE permissions SET name = ?, description = ? WHERE permission_id = ?`,
       [name, description, id]
     );
     return { success: true };

@@ -21,7 +21,7 @@ export const useCreateRole = () =>
 export const useUpdateRole = () =>
   useMutation({
     mutationFn: async ({ role_id, data }) => {
-      const res = await axiosInstanceWithToken.put(`/roles/${role_id}`, data);
+      const res = await axiosInstanceWithToken.patch(`/roles/${role_id}`, data);
       return res.data;
     },
   });
