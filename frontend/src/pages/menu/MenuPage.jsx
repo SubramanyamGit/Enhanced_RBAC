@@ -5,6 +5,7 @@ import CustomTable from "../../components/CustomTable";
 import { toast } from "react-toastify";
 import AddMenuModal from "../../components/menus/AddMenuModal";
 import EditMenuModal from "../../components/menus/EditMenuModal";
+import dayjs from "dayjs";
 
 const MenuPage = () => {
   const { data: menus = [], isLoading, error, refetch } = useMenus();
@@ -17,6 +18,14 @@ const MenuPage = () => {
     { header: "Label", accessor: "label" },
     { header: "Route", accessor: "route" },
     { header: "Menu Key", accessor: "menu_key" },
+    {
+      header: "Created At",
+      accessor: (row) => dayjs(row.created_at).format("MMM D, YYYY h:mm A"),
+    },
+    {
+      header: "Updated At",
+      accessor: (row) => dayjs(row.updated_at).format("MMM D, YYYY h:mm A"),
+    },
   ];
 
   const handleDelete = async (menu) => {

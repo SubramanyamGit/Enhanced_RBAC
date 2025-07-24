@@ -1,35 +1,45 @@
-import React, { useState } from 'react';
-import { Button, Alert } from 'react-bootstrap';
-import CustomTable from '../../components/CustomTable';
-import { usePermissions, useDeletePermission } from '../../hooks/usePermissions';
-import { useAuth } from '../../context/AuthContext';
-import AddPermissionModal from '../../components/permissions/AddPermissionModal';
-import EditPermissionModal from '../../components/permissions/EditPermissionModal';
-import { toast } from 'react-toastify';
-import dayjs from 'dayjs';
+import React, { useState } from "react";
+import { Button, Alert } from "react-bootstrap";
+import CustomTable from "../../components/CustomTable";
+import {
+  usePermissions,
+  useDeletePermission,
+} from "../../hooks/usePermissions";
+import { useAuth } from "../../context/AuthContext";
+import AddPermissionModal from "../../components/permissions/AddPermissionModal";
+import EditPermissionModal from "../../components/permissions/EditPermissionModal";
+import { toast } from "react-toastify";
+import dayjs from "dayjs";
 
 const PermissionsPage = () => {
-  const { data: permissions = [], isLoading, error, refetch } = usePermissions();
+  const {
+    data: permissions = [],
+    isLoading,
+    error,
+    refetch,
+  } = usePermissions();
   const deletePermission = useDeletePermission();
   const { user } = useAuth();
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [editPermission, setEditPermission] = useState(null);
 
-  const canCreate = user?.permissions?.permissions?.includes('create_permissions');
-  const canEdit = user?.permissions?.permissions?.includes('edit_permissions');
-  const canDelete = user?.permissions?.permissions?.includes('delete_permissions');
+  const canCreate =
+    user?.permissions?.permissions?.includes("create_permissions");
+  const canEdit = user?.permissions?.permissions?.includes("edit_permissions");
+  const canDelete =
+    user?.permissions?.permissions?.includes("delete_permissions");
 
   const columns = [
-    { header: 'Permission Name', accessor: 'name' },
-    { header: 'Description', accessor: 'description' },
- {
-      header: 'Created At',
-      accessor: row => dayjs(row.created_at).format('MMM D, YYYY h:mm A'),
+    { header: "Permission Name", accessor: "name" },
+    { header: "Description", accessor: "description" },
+    {
+      header: "Created At",
+      accessor: (row) => dayjs(row.created_at).format("MMM D, YYYY h:mm A"),
     },
     {
-      header: 'Updated At',
-      accessor: row => dayjs(row.updated_at).format('MMM D, YYYY h:mm A'),
+      header: "Updated At",
+      accessor: (row) => dayjs(row.updated_at).format("MMM D, YYYY h:mm A"),
     },
   ];
 
@@ -39,10 +49,10 @@ const PermissionsPage = () => {
     if (window.confirm(`Delete permission "${permission.permission_name}"?`)) {
       try {
         await deletePermission.mutateAsync(permission.permission_id);
-        toast.success('Permission deleted');
+        toast.success("Permission deleted");
         refetch();
       } catch {
-        toast.error('Failed to delete permission');
+        toast.error("Failed to delete permission");
       }
     }
   };

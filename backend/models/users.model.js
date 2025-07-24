@@ -80,6 +80,7 @@ getUserPermissions: async (token) => {
 
   const permissionNames = permResults.map((p) => p.name);
   const permissionIds = permResults.map((p) => p.permission_id);
+console.log("permissionIds",permissionIds,permResults);
 
   // 2. Fetch all menu_keys from the menus table
   const [menuKeyResults] = await sql.query(`SELECT DISTINCT menu_key FROM menus`);
@@ -95,6 +96,7 @@ getUserPermissions: async (token) => {
       filteredGroupedPermissions[key] = perms;
     }
   }
+console.log("filteredGroupedPermissions",filteredGroupedPermissions,permissionIds);
 
   // ✅ 5. Exit early if no permissions
   if (!permissionIds.length) {
@@ -121,6 +123,8 @@ getUserPermissions: async (token) => {
   const menu = menuResults
     .filter((menuItem) => filteredGroupedPermissions[menuItem.menu_key]?.length > 0)
     .map((menuItem) => {
+      console.log("menuItem",menuItem);
+      
       const key = menuItem.menu_key;
       return {
         label: menuItem.label,

@@ -11,6 +11,7 @@ import { useAxiosInterceptor } from "./hooks/useAxiosInterceptor";
 import DepartmentsPage from "./pages/departments/DepartmentsPage";
 import PermissionsPage from "./pages/permissions/PermissionsPage";
 import MenuPage from "./pages/menu/MenuPage";
+import RequestPage from "./pages/requests/RequestsPage";
 
 function App() {
   const { token } = useAuth();
@@ -36,6 +37,7 @@ function App() {
         <Route path="admin/roles" element={<RolesPage />} />
         <Route path="admin/menus" element={<MenuPage />} />
         <Route path="permissions" element={<PermissionsPage />} />
+        <Route path="requests" element={<RequestPage />} />
 
         <Route path="dashboard" element={<DashboardPage />} />
 

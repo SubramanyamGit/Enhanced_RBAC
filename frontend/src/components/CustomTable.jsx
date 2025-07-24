@@ -13,9 +13,11 @@ export default function CustomTable({
   showActions = false,
   showEdit = true,
   showDelete = true,
+  showSearch = true
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
+console.log("showActions",showActions);
 
   const filteredData = useMemo(() => {
     if (!searchTerm) return data;
@@ -90,7 +92,7 @@ const renderPagination = () => {
 
   return (
     <div className="table-responsive">
-      <div className="d-flex justify-content-between align-items-center mb-2">
+    {showSearch &&  <div className="d-flex justify-content-between align-items-center mb-2">
         <Form.Control
           type="text"
           placeholder="Search..."
@@ -101,7 +103,7 @@ const renderPagination = () => {
           }}
           style={{ maxWidth: '250px' }}
         />
-      </div>
+      </div>}
 
       <Table bordered hover striped className="align-middle text-start shadow-sm">
         <thead className="table-primary">
