@@ -1,5 +1,6 @@
 const userModel = require("../models/users.model");
-const logAudit = require("../utils/auditLoggers"); // ✅ import
+const logAudit = require("../utils/auditLoggers");
+const sendMail = require("../utils/mailer");
 
 // /users/my_permissions
 exports.getMyPermissions = async (req, res) => {
@@ -75,6 +76,19 @@ exports.createUser = async (req, res) => {
         role_id,
       },
     });
+    await sendMail({
+      to: email,
+      subject: "Your RBAC Account has been created",
+      html: `
+    <p>Hello ${full_name},</p>
+    <p>Your account has been created. You can sign in using the following:</p>
+    <ul>
+      <li><b>Email:</b> ${email}</li>
+      <li><b>Password:</b> ${password}</li>
+    </ul>
+    <p>Please change your password after first login.</p>
+  `,
+    });
 
     res.status(201).json({ message: "User created", userId: result.userId });
   } catch (err) {
@@ -88,7 +102,11 @@ exports.updateUser = async (req, res) => {
   const { full_name, password, role_id, user_status } = req.body;
 
   try {
-    await userModel.updateUser(id, { full_name, password, user_status }, role_id);
+    await userModel.updateUser(
+      id,
+      { full_name, password, user_status },
+      role_id
+    );
 
     await logAudit({
       userId: req.user.user_id,

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import CustomTable from '../../components/CustomTable';
-import { Spinner, Alert, Button } from 'react-bootstrap';
-import dayjs from 'dayjs';
-import { useUsers, useDeleteUser } from '../../hooks/useUsers';
-import { useAuth } from '../../context/AuthContext';
-import AddUserModal from '../../components/users/AddUserModal';
-import EditUserModal from '../../components/users/EditUserModal';
+import React, { useState } from "react";
+import CustomTable from "../../components/CustomTable";
+import { Spinner, Alert, Button } from "react-bootstrap";
+import dayjs from "dayjs";
+import { useUsers, useDeleteUser } from "../../hooks/useUsers";
+import { useAuth } from "../../context/AuthContext";
+import AddUserModal from "../../components/users/AddUserModal";
+import EditUserModal from "../../components/users/EditUserModal";
 
 const UsersPage = () => {
   const { data: users = [], isLoading, error, refetch } = useUsers();
@@ -14,20 +14,20 @@ const UsersPage = () => {
   const [editUser, setEditUser] = useState(null);
   const deleteUserMutation = useDeleteUser();
 
-  const canEdit = user?.permissions?.users?.includes('edit_users');
-  const canDelete = user?.permissions?.users?.includes('delete_users');
-  const canCreate = user?.permissions?.users?.includes('create_users');
-console.log(canDelete);
+  const canEdit = user?.permissions?.users?.includes("edit_users");
+  const canDelete = user?.permissions?.users?.includes("delete_users");
+  const canCreate = user?.permissions?.users?.includes("create_users");
+  console.log(canDelete);
 
   const columns = [
-    { header: 'Name', accessor: 'full_name' },
-    { header: 'Email', accessor: 'email' },
-    { header: 'Role', accessor: 'roles' },
-    { header: 'Status', accessor: 'user_status' },
-     {
-          header: 'Created At',
-          accessor: row => dayjs(row.created_at).format('MMM D, YYYY h:mm A'),
-        },
+    { header: "Name", accessor: "full_name" },
+    { header: "Email", accessor: "email" },
+    { header: "Role", accessor: "roles" },
+    { header: "Status", accessor: "user_status" },
+    {
+      header: "Created At",
+      accessor: (row) => dayjs(row.created_at).format("MMM D, YYYY h:mm A"),
+    },
   ];
 
   const handleEdit = (row) => {
@@ -35,13 +35,13 @@ console.log(canDelete);
   };
 
   const handleDelete = async (row) => {
-    console.log("DELETE")
+    console.log("DELETE");
     if (window.confirm(`Are you sure you want to delete ${row.full_name}?`)) {
       try {
         await deleteUserMutation.mutateAsync(row.user_id);
         refetch();
       } catch (err) {
-        alert('Failed to delete user');
+        alert("Failed to delete user");
       }
     }
   };
@@ -67,10 +67,9 @@ console.log(canDelete);
           itemsPerPage={5}
           showActions={true}
           showEdit={canEdit}
-          showDelete={false}
+          showDelete={canDelete}
           onEdit={handleEdit}
-
-          // onDelete={canDelete ? handleDelete : undefined}
+          onDelete={handleDelete}
         />
       )}
 

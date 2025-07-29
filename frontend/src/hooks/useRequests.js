@@ -23,7 +23,12 @@ export const useCreateRequest = () => {
 export const useApproveRequest = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id) => axiosInstanceWithToken.patch(`/requests/${id}/approve`),
+    mutationFn: ({ id, requested_by, permission_id, permission_name }) =>
+      axiosInstanceWithToken.patch(`/requests/${id}/approve`, {
+        requested_by,
+        permission_id,
+        permission_name,
+      }),
     onSuccess: () => queryClient.invalidateQueries(['requests']),
   });
 };
@@ -31,8 +36,14 @@ export const useApproveRequest = () => {
 export const useRejectRequest = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, rejection_reason }) =>
-      axiosInstanceWithToken.patch(`/requests/${id}/reject`, { rejection_reason }),
+    mutationFn: ({ id, rejection_reason, requested_by, permission_id, permission_name }) =>
+      axiosInstanceWithToken.patch(`/requests/${id}/reject`, {
+        rejection_reason,
+        requested_by,
+        permission_id,
+        permission_name,
+      }),
     onSuccess: () => queryClient.invalidateQueries(['requests']),
   });
 };
+

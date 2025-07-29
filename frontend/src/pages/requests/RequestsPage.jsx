@@ -50,6 +50,7 @@ const RequestPage = () => {
 
     try {
       await createRequest.mutateAsync({
+        permission_name: selectedPermission.label,
         permission_id: selectedPermission.value,
         reason,
         expires_at: expiresAt || null,
@@ -71,9 +72,19 @@ const RequestPage = () => {
 
   const handleActionConfirm = async () => {
     const { type, row } = actionModal;
+console.log(row.requested_by);
+
+    const payload = {
+      id: row.request_id,
+      requested_by: row.requested_by,
+      permission_id: row.permission_id,
+      permission_name: row.permission_name,
+    };
+console.log(payload);
+
     try {
       if (type === "approve") {
-        await approveRequest.mutateAsync(row.request_id);
+        await approveRequest.mutateAsync(payload);
         toast.success("Approved successfully");
       } else {
         if (!rejectionReason) {
@@ -81,7 +92,7 @@ const RequestPage = () => {
           return;
         }
         await rejectRequest.mutateAsync({
-          id: row.request_id,
+          ...payload,
           rejection_reason: rejectionReason,
         });
         toast.success("Rejected successfully");
