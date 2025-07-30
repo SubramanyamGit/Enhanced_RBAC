@@ -26,7 +26,7 @@ const AddDepartmentModal = ({ show, onClose, onSuccess }) => {
         resetForm();
         onSuccess();
       } catch (err) {
-        toast.error('Failed to create department');
+        // toast.error('Failed to create department');
       }
     },
   });

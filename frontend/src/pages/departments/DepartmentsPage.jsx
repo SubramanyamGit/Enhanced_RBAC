@@ -36,7 +36,7 @@ const DepartmentsPage = () => {
         toast.success('Department deleted successfully'); // ✅ success toast
         refetch();
       } catch (err) {
-        toast.error('Failed to delete department'); // ✅ error toast
+        // toast.error('Failed to delete department'); // 
       }
     }
   };

@@ -52,7 +52,7 @@ const PermissionsPage = () => {
         toast.success("Permission deleted");
         refetch();
       } catch {
-        toast.error("Failed to delete permission");
+        // toast.error("Failed to delete permission");
       }
     }
   };

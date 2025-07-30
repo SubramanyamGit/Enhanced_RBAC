@@ -1,11 +1,10 @@
 const departmentModel = require("../models/departments.model");
-const logAudit = require("../utils/auditLoggers"); // import audit logger
+const logAudit = require("../utils/auditLoggers");
 
 exports.getDepartments = async (req, res) => {
   try {
     const departments = await departmentModel.getAll();
 
-    // audit: view department list
     await logAudit({
       userId: req.user.user_id,
       actionType: "VIEW_DEPARTMENTS",
@@ -24,7 +23,6 @@ exports.getDepartmentById = async (req, res) => {
     const department = await departmentModel.getById(req.params.id);
     if (!department) return res.status(404).json({ error: "Department not found" });
 
-    // audit: view department by ID
     await logAudit({
       userId: req.user.user_id,
       actionType: "VIEW_DEPARTMENT",
@@ -44,16 +42,22 @@ exports.createDepartment = async (req, res) => {
 
     const result = await departmentModel.create({ name, description });
 
-    // audit: create
     await logAudit({
       userId: req.user.user_id,
       actionType: "CREATE_DEPARTMENT",
       details: { department_id: result.department_id, name },
     });
 
-    res.status(201).json({ message: "Department created", department_id: result.department_id });
+    res.status(201).json({
+      success: true,
+      message: "Department created successfully",
+      department_id: result.department_id,
+    });
   } catch (err) {
     console.error("Create Department Error:", err);
+    if (err.code === "DUPLICATE_DEPARTMENT") {
+      return res.status(409).json({ error: err.message });
+    }
     res.status(500).json({ error: "Failed to create department" });
   }
 };
@@ -65,16 +69,18 @@ exports.updateDepartment = async (req, res) => {
 
     await departmentModel.update(departmentId, { name, description });
 
-    // audit: update
     await logAudit({
       userId: req.user.user_id,
       actionType: "UPDATE_DEPARTMENT",
       details: { department_id: departmentId, updatedFields: { name, description } },
     });
 
-    res.json({ message: "Department updated successfully" });
+    res.json({ success: true, message: "Department updated successfully" });
   } catch (err) {
     console.error("Update Department Error:", err);
+    if (err.code === "DUPLICATE_DEPARTMENT") {
+      return res.status(409).json({ error: err.message });
+    }
     res.status(500).json({ error: "Failed to update department" });
   }
 };
@@ -85,14 +91,13 @@ exports.deleteDepartment = async (req, res) => {
 
     await departmentModel.remove(departmentId);
 
-    // audit: delete
     await logAudit({
       userId: req.user.user_id,
       actionType: "DELETE_DEPARTMENT",
       details: `Deleted department ID ${departmentId}`,
     });
 
-    res.json({ message: "Department deleted successfully" });
+    res.json({ success: true, message: "Department deleted successfully" });
   } catch (err) {
     console.error("Delete Department Error:", err);
     res.status(500).json({ error: "Failed to delete department" });

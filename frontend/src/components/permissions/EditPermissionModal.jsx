@@ -24,7 +24,7 @@ console.log("permos",permission);
         toast.success('Permission updated');
         onSuccess();
       } catch {
-        toast.error('Failed to update permission');
+        // toast.error('Failed to update permission');
       }
     },
   });

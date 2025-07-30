@@ -1,4 +1,3 @@
-// models/permissions.model.js
 const sql = require('../config/db');
 
 module.exports = {
@@ -13,6 +12,17 @@ module.exports = {
   },
 
   create: async ({ name, description }) => {
+    // ✅ Check for duplicate permission name
+    const [existing] = await sql.query(
+      `SELECT permission_id FROM permissions WHERE name = ?`,
+      [name]
+    );
+    if (existing.length > 0) {
+      const error = new Error("Permission name already exists.");
+      error.code = "DUPLICATE_PERMISSION";
+      throw error;
+    }
+
     const [result] = await sql.query(
       `INSERT INTO permissions (name, description) VALUES (?, ?)`,
       [name, description]
@@ -21,6 +31,17 @@ module.exports = {
   },
 
   update: async (id, { name, description }) => {
+    // ✅ Check for duplicate name in other rows
+    const [existing] = await sql.query(
+      `SELECT permission_id FROM permissions WHERE name = ? AND permission_id != ?`,
+      [name, id]
+    );
+    if (existing.length > 0) {
+      const error = new Error("Another permission with this name already exists.");
+      error.code = "DUPLICATE_PERMISSION";
+      throw error;
+    }
+
     await sql.query(
       `UPDATE permissions SET name = ?, description = ? WHERE permission_id = ?`,
       [name, description, id]

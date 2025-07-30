@@ -23,7 +23,7 @@ const AddPermissionModal = ({ show, onClose, onSuccess }) => {
         resetForm();
         onSuccess();
       } catch {
-        toast.error('Failed to create permission');
+        // toast.error('Failed to create permission');
       }
     },
   });

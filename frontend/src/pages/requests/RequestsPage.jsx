@@ -61,7 +61,7 @@ const RequestPage = () => {
       setExpiresAt("");
       setSelectedPermission(null);
     } catch {
-      toast.error("Failed to submit");
+      // toast.error("Failed to submit");
     }
   };
 
@@ -99,7 +99,7 @@ console.log(payload);
       }
       setActionModal({ show: false, type: "", row: null });
     } catch {
-      toast.error("Action failed");
+      // toast.error("Action failed");
     }
   };
 

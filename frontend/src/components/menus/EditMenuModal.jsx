@@ -26,7 +26,7 @@ const EditMenuModal = ({ show, menu, onClose, onSuccess }) => {
         toast.success('Menu updated');
         onSuccess();
       } catch {
-        toast.error('Failed to update menu');
+        // toast.error('Failed to update menu');
       }
     },
   });

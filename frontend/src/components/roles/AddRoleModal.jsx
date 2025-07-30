@@ -49,7 +49,7 @@ const AddRoleModal = ({ show, onClose, onSuccess }) => {
         onSuccess();
         onClose();
       } catch (err) {
-        toast.error('Failed to create role');
+        // toast.error('Failed to create role');
       }
     },
   });

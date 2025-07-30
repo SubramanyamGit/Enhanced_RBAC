@@ -34,7 +34,7 @@ const RolesPage = () => {
         toast.success('Role deleted successfully');
         refetch();
       } catch (err) {
-        toast.error('Failed to delete role');
+        // toast.error('Failed to delete role');
       }
     }
   };

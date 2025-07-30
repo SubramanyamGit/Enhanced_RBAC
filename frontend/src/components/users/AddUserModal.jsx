@@ -38,7 +38,7 @@ const AddUserModal = ({ show, onClose, onSuccess }) => {
         onClose();
       } catch (err) {
         console.error(err);
-        toast.error("Failed to create user");
+        // toast.error("Failed to create user");
       }
     },
   });

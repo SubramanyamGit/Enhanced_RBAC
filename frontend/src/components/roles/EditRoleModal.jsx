@@ -64,7 +64,7 @@ const EditRoleModal = ({ show, role, onClose, onSuccess }) => {
         toast.success("Role updated successfully");
         onSuccess();
       } catch {
-        toast.error("Failed to update role");
+        // toast.error("Failed to update role");
       }
     },
     enableReinitialize: true,

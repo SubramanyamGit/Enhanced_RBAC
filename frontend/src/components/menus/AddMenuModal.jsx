@@ -26,7 +26,7 @@ const AddMenuModal = ({ show, onClose, onSuccess }) => {
         resetForm();
         onSuccess();
       } catch {
-        toast.error('Failed to create menu');
+        // toast.error('Failed to create menu');
       }
     },
   });
