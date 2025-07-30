@@ -1,12 +1,12 @@
 import SidebarMenu from "./SidebarMenu";
 import TopNavbar from "./TopNavbar";
 import { Outlet } from "react-router-dom";
-import '../styles/layout.css'
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
+import "../styles/layout.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AppLayout = () => {
+
   return (
     <div className="vw-100 ">
       <TopNavbar />
@@ -19,7 +19,6 @@ const AppLayout = () => {
         </main>
       </div>
       <ToastContainer position="top-right" autoClose={3000} />
-
     </div>
   );
 };

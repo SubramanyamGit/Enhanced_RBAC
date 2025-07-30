@@ -97,7 +97,6 @@ exports.approveRequest = async (req, res) => {
     if (!userResult) {
       return res.status(404).json({ error: "Requested user not found" });
     }
-console.log(userResult);
 
     const requested_by_name = userResult.name;
     const requested_by_email = userResult.email;

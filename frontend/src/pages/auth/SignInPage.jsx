@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import {useEffect} from 'react'
+import { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
 import { Formik } from "formik";
@@ -9,7 +9,7 @@ import { useSignIn } from "../../hooks/useSignIn";
 
 const SignInPage = () => {
   const navigate = useNavigate();
-  const { login,token,updateUser } = useAuth();
+  const { login, token, updateUser } = useAuth();
   const { mutate, isPending, error } = useSignIn(); // Mutation & loading/error
 
   const initialValues = { email: "", password: "" };
@@ -22,9 +22,18 @@ const SignInPage = () => {
   const handleSubmit = async (values, { setStatus }) => {
     mutate(values, {
       onSuccess: (data) => {
-        login(data.token);
-        updateUser(data.user)
-        navigate("/admin/user");
+        
+        if (data.mustChangePassword) {
+          console.log("Hello");
+          
+          localStorage.setItem("isPasswordChanged",!data.mustChangePassword)
+          localStorage.setItem("token", data.token);
+          navigate(`/set-new-password`);
+        } else {
+          login(data.token,data.mustChangePassword);
+          updateUser(data.user);
+          navigate("/admin/user");
+        }
       },
       onError: (err) => {
         const message =
@@ -34,7 +43,7 @@ const SignInPage = () => {
     });
   };
 
-   useEffect(() => {
+  useEffect(() => {
     if (token) {
       navigate("/dashboard");
     }
@@ -57,7 +66,10 @@ const SignInPage = () => {
           )}
         </Col>
 
-        <Col md={6} className="d-flex align-items-center justify-content-center">
+        <Col
+          md={6}
+          className="d-flex align-items-center justify-content-center"
+        >
           <div style={{ width: "100%", maxWidth: "400px", padding: "20px" }}>
             <h2 className="text-primary mb-4">Sign In</h2>
 

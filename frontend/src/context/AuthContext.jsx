@@ -6,6 +6,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
+  const [isPasswordChanged,setIsPasswordChanged] = useState(localStorage.getItem("isPasswordChanged"))
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
@@ -24,11 +25,10 @@ export const AuthProvider = ({ children }) => {
     if (token) fetchUser();
   }, [token]);
 
-  const login = (jwtToken) => {
-    console.log(
-      "jwtToken",jwtToken
-    );
-    
+  const login = (jwtToken,mustChangePassword) => {
+    console.log("jwtToken", jwtToken);
+    localStorage.setItem("isPasswordChanged", !mustChangePassword);
+
     localStorage.setItem("token", jwtToken);
     setToken(jwtToken);
     fetchUser();
@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout,isPasswordChanged }}>
       {children}
     </AuthContext.Provider>
   );

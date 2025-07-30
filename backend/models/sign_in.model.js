@@ -1,3 +1,4 @@
+// models/sign_in.model.js
 const sql = require("../config/db");
 
 const getUserByEmailWithRole = async (email) => {
@@ -8,6 +9,7 @@ const getUserByEmailWithRole = async (email) => {
       u.email,
       u.password,
       u.user_status,
+      u.must_change_password,
       r.name AS role
     FROM users u
     LEFT JOIN user_roles ur ON u.user_id = ur.user_id
@@ -15,7 +17,7 @@ const getUserByEmailWithRole = async (email) => {
     WHERE u.email = ?
   `, [email]);
 
-  return rows[0]; // returns undefined if not found
+  return rows[0]; // undefined if not found
 };
 
 module.exports = {

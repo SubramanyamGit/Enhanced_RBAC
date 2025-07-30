@@ -21,12 +21,14 @@ exports.signIn = async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
+    // 👇 include must_change_password in token payload
     const token = jwt.sign(
       {
         user_id: user.user_id,
         full_name: user.full_name,
         email: user.email,
         role: user.role,
+        must_change_password: user.must_change_password
       },
       process.env.JWT_SECRET_KEY,
       { expiresIn: "6h" }
@@ -34,6 +36,7 @@ exports.signIn = async (req, res) => {
 
     res.json({
       token,
+      mustChangePassword: user.must_change_password,
       user: {
         user_id: user.user_id,
         full_name: user.full_name,

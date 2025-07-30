@@ -11,8 +11,20 @@ const authenticate = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    req.user = decoded; // user_id, email, full_name, role
-    next(); // proceed to route
+    req.user = decoded;
+
+    // ✅ Allow set-new-password route even if must_change_password is true
+    const bypassRoutes = ["/auth/set_password"];
+    if (
+      decoded.must_change_password &&
+      !bypassRoutes.includes(req.originalUrl)
+    ) {
+      return res.status(403).json({
+        error: "Please change your password before accessing the system.",
+      });
+    }
+
+    next();
   } catch (err) {
     console.error("JWT verification failed:", err);
     res.status(401).json({ error: "Unauthorized. Invalid token." });
