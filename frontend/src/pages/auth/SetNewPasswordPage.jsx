@@ -5,6 +5,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import loginImage from "../../assets/login-image.png";
 import { useSetNewPassword } from "../../hooks/useSetNewPassword";
+import { toast } from "react-toastify";
 
 const SetNewPasswordPage = () => {
   const navigate = useNavigate();
@@ -63,6 +64,7 @@ const SetNewPasswordPage = () => {
                   { password: values.newPassword },
                   {
                     onSuccess: () => {
+                      toast.success("Password Updated Suceesfully, Login Now!");
                       localStorage.removeItem("token");
                       localStorage.removeItem("isPasswordChanged");
                       navigate("/signin");

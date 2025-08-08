@@ -2,7 +2,7 @@ import { Nav } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import { FaUsers, FaLock, FaCheck, FaBars, FaFolder } from "react-icons/fa";
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext"; // ✅ context hook
+import { useAuth } from "../context/AuthContext"; //   context hook
 import "../styles/layout.css";
 
 // icon mapping based on menu_key
@@ -10,13 +10,13 @@ const icons = {
   users: <FaUsers className="me-2" />,
   roles: <FaLock className="me-2" />,
   approvals: <FaCheck className="me-2" />,
-  departments: <FaFolder className="me-2" />, // ✅ new key
+  departments: <FaFolder className="me-2" />, //   new key
 };
 
 const SidebarMenu = () => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const { user } = useAuth(); // ✅ Get menu from context
+  const { user } = useAuth(); //   Get menu from context
 
   const menuItems = user?.menu || []; // safe fallback
 

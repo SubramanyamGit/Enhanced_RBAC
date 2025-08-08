@@ -43,7 +43,7 @@ const DashboardPage = () => {
           <Col md={4}>
             <Card className="shadow-sm border-0 h-100">
               <Card.Body>
-                <h5 className="text-primary mb-2">✅ Approvals</h5>
+                <h5 className="text-primary mb-2">  Approvals</h5>
                 <p className="text-muted">Review and approve access requests.</p>
               </Card.Body>
             </Card>

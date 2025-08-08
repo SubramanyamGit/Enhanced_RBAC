@@ -101,7 +101,7 @@ module.exports = {
     try {
       await conn.beginTransaction();
 
-      // ✅ Check for duplicate email
+      //   Check for duplicate email
       const [existing] = await conn.query(`SELECT user_id FROM users WHERE email = ?`, [
         userData.email,
       ]);

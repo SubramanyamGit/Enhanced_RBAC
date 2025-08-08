@@ -12,7 +12,7 @@ module.exports = {
   },
 
   create: async ({ name, description }) => {
-    // ✅ Check for duplicate permission name
+    //   Check for duplicate permission name
     const [existing] = await sql.query(
       `SELECT permission_id FROM permissions WHERE name = ?`,
       [name]
@@ -31,7 +31,7 @@ module.exports = {
   },
 
   update: async (id, { name, description }) => {
-    // ✅ Check for duplicate name in other rows
+    //   Check for duplicate name in other rows
     const [existing] = await sql.query(
       `SELECT permission_id FROM permissions WHERE name = ? AND permission_id != ?`,
       [name, id]

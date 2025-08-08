@@ -37,7 +37,7 @@ module.exports = {
     try {
       await conn.beginTransaction();
 
-      // ✅ Check for duplicate name
+      //   Check for duplicate name
       const [existing] = await conn.query(
         `SELECT role_id FROM roles WHERE name = ?`,
         [name]
@@ -78,7 +78,7 @@ module.exports = {
     try {
       await conn.beginTransaction();
 
-      // ✅ Check for duplicate role name in other records
+      //   Check for duplicate role name in other records
       const [existing] = await conn.query(
         `SELECT role_id FROM roles WHERE name = ? AND role_id != ?`,
         [name, id]

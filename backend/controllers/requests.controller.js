@@ -92,7 +92,7 @@ exports.approveRequest = async (req, res) => {
   const adminId = req.user.user_id;
 
   try {
-    // ✅ 1. Fetch user details using user_id
+    //   1. Fetch user details using user_id
     const userResult = await getById(requested_by); // Assume this returns [{ name, email }]
     if (!userResult) {
       return res.status(404).json({ error: "Requested user not found" });
@@ -101,20 +101,20 @@ exports.approveRequest = async (req, res) => {
     const requested_by_name = userResult.name;
     const requested_by_email = userResult.email;
 
-    // ✅ 2. Approve the request
+    //   2. Approve the request
     await requestModel.approve({
       request_id,
       reviewed_by: adminId,
     });
 
-    // ✅ 3. Log audit
+    //   3. Log audit
     await logAudit({
       userId: adminId,
       actionType: "APPROVE_PERMISSION_REQUEST",
       details: { request_id },
     });
 
-    // ✅ 4. Send email
+    //   4. Send email
     await sendMail({
       to: requested_by_email,
       subject: `Your Permission Request was Approved`,

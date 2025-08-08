@@ -19,7 +19,7 @@ module.exports = {
   },
 
   create: async ({ name, description }) => {
-    // ✅ Check for duplicate name
+    //   Check for duplicate name
     const [existing] = await sql.query(
       `SELECT department_id FROM departments WHERE name = ?`,
       [name]
@@ -38,7 +38,7 @@ module.exports = {
   },
 
   update: async (id, { name, description }) => {
-    // ✅ Check for duplicate name in other rows
+    //   Check for duplicate name in other rows
     const [existing] = await sql.query(
       `SELECT department_id FROM departments WHERE name = ? AND department_id != ?`,
       [name, id]

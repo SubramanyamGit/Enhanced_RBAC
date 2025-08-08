@@ -5,7 +5,7 @@ import { useDepartments, useDeleteDepartment } from '../../hooks/useDepartments'
 import { useAuth } from '../../context/AuthContext';
 import AddDepartmentModal from '../../components/departments/AddDepartmentModal';
 import EditDepartmentModal from '../../components/departments/EditDepartmentModal';
-import { toast } from 'react-toastify'; // ✅ import toast
+import { toast } from 'react-toastify'; //   import toast
 
 const DepartmentsPage = () => {
   const { data: departments = [], isLoading, error, refetch } = useDepartments();
@@ -33,7 +33,7 @@ const DepartmentsPage = () => {
     if (window.confirm(`Are you sure you want to delete "${row.name}"?`)) {
       try {
         await deleteMutation.mutateAsync(row.department_id);
-        toast.success('Department deleted successfully'); // ✅ success toast
+        toast.success('Department deleted successfully'); //   success toast
         refetch();
       } catch (err) {
         // toast.error('Failed to delete department'); // 
@@ -68,7 +68,7 @@ const DepartmentsPage = () => {
         />
       )}
 
-      {/* ✅ Add Department Modal */}
+      {/*   Add Department Modal */}
       <AddDepartmentModal
         show={showAddModal}
         onClose={() => setShowAddModal(false)}
@@ -78,7 +78,7 @@ const DepartmentsPage = () => {
         }}
       />
 
-      {/* ✅ Edit Department Modal */}
+      {/*   Edit Department Modal */}
       <EditDepartmentModal
         show={!!editDepartment}
         department={editDepartment}

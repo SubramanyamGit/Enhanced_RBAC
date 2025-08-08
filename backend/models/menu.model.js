@@ -16,7 +16,7 @@ module.exports = {
     try {
       await conn.beginTransaction();
 
-      // ✅ Check for duplicate menu_key
+      //   Check for duplicate menu_key
       const [existing] = await conn.query(
         `SELECT id FROM menus WHERE menu_key = ?`,
         [menu_key]
@@ -60,7 +60,7 @@ module.exports = {
   },
 
   update: async (id, { label, route, menu_key }) => {
-    // ✅ Check for duplicate key in another menu
+    //   Check for duplicate key in another menu
     const [existing] = await sql.query(
       `SELECT id FROM menus WHERE menu_key = ? AND id != ?`,
       [menu_key, id]

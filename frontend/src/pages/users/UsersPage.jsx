@@ -6,6 +6,7 @@ import { useUsers, useDeleteUser } from "../../hooks/useUsers";
 import { useAuth } from "../../context/AuthContext";
 import AddUserModal from "../../components/users/AddUserModal";
 import EditUserModal from "../../components/users/EditUserModal";
+import { toast } from "react-toastify";
 
 const UsersPage = () => {
   const { data: users = [], isLoading, error, refetch } = useUsers();
@@ -87,6 +88,7 @@ const UsersPage = () => {
         user={editUser}
         onClose={() => setEditUser(null)}
         onSuccess={() => {
+          toast.success("User Updated Successfully")
           setEditUser(null);
           refetch();
         }}

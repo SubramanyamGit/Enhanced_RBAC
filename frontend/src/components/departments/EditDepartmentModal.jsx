@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useUpdateDepartment } from '../../hooks/useDepartments';
-import { toast } from 'react-toastify'; // ✅ Import toast
+import { toast } from 'react-toastify'; //   Import toast
 
 const EditDepartmentModal = ({ show, department, onClose, onSuccess }) => {
   const [name, setName] = useState('');

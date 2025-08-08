@@ -6,6 +6,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import loginImage from "../../assets/login-image.png";
 import { useSignIn } from "../../hooks/useSignIn";
+import { toast } from "react-toastify";
 
 const SignInPage = () => {
   const navigate = useNavigate();
@@ -22,22 +23,20 @@ const SignInPage = () => {
   const handleSubmit = async (values, { setStatus }) => {
     mutate(values, {
       onSuccess: (data) => {
-        
         if (data.mustChangePassword) {
-          console.log("Hello");
-          
-          localStorage.setItem("isPasswordChanged",!data.mustChangePassword)
+          localStorage.setItem("isPasswordChanged", !data.mustChangePassword);
           localStorage.setItem("token", data.token);
           navigate(`/set-new-password`);
         } else {
-          login(data.token,data.mustChangePassword);
+          login(data.token, data.mustChangePassword);
           updateUser(data.user);
+          toast.success("Login Success");
           navigate("/admin/user");
         }
       },
       onError: (err) => {
         const message =
-          err.response?.data?.message || "Sign in failed. Try again.";
+          err.response?.data?.error || "Sign in failed. Try again.";
         setStatus(message);
       },
     });

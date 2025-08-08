@@ -13,7 +13,7 @@ const authenticate = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     req.user = decoded;
 
-    // ✅ Allow set-new-password route even if must_change_password is true
+    //  Allow set-new-password route even if must_change_password is true
     const bypassRoutes = ["/auth/set_password"];
     if (
       decoded.must_change_password &&

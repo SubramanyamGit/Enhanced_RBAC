@@ -5,13 +5,13 @@ import * as Yup from 'yup';
 import { useCreateRole } from '../../hooks/useRoles';
 import { toast } from 'react-toastify';
 import { useDepartments } from '../../hooks/useDepartments';
-import { usePermissions } from '../../hooks/usePermissions'; // ✅ create/use this hook
+import { usePermissions } from '../../hooks/usePermissions'; //   create/use this hook
 import Select from 'react-select';
 
 const AddRoleModal = ({ show, onClose, onSuccess }) => {
   const createRole = useCreateRole();
   const { data: departments = [] } = useDepartments();
-  const { data: permissions = [] } = usePermissions(); // ✅ fetch permissions
+  const { data: permissions = [] } = usePermissions(); //   fetch permissions
 
   const [permissionOptions, setPermissionOptions] = useState([]);
 
@@ -30,7 +30,7 @@ const AddRoleModal = ({ show, onClose, onSuccess }) => {
     initialValues: {
       name: '',
       department_id: '',
-      permission_ids: [], // ✅ new field
+      permission_ids: [], //   new field
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Role name is required'),
