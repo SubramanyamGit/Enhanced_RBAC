@@ -20,6 +20,17 @@ const getUserByEmailWithRole = async (email) => {
   return rows[0]; // undefined if not found
 };
 
+const setTempPasswordByEmail = async (email, hashedPassword) => {
+  const [result] = await sql.query(
+    `UPDATE users
+        SET password = ?, must_change_password = 1, updated_at = NOW()
+      WHERE email = ? AND user_status = 'Active'`,
+    [hashedPassword, email]
+  );
+  return result.affectedRows; // 0 if not found, 1 if updated
+};
+
 module.exports = {
   getUserByEmailWithRole,
+  setTempPasswordByEmail
 };

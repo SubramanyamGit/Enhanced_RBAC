@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
       const res = await axiosInstanceWithToken.get("/users/my_permissions");
       setUser(res.data);
     } catch (err) {
-      console.error(" Failed to fetch user:", err);
+        console.error(" Failed to fetch user:", err);
       // logout(); // token might be invalid
     }
   };
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = (jwtToken,mustChangePassword) => {
-    console.log("jwtToken", jwtToken);
+      console.log("jwtToken", jwtToken);
     localStorage.setItem("isPasswordChanged", !mustChangePassword);
 
     localStorage.setItem("token", jwtToken);

@@ -17,7 +17,7 @@ const logAudit = async ({ userId, actionType, details }) => {
       [userId, actionType, actionDetails]
     );
   } catch (err) {
-    console.error("Audit log error:", err); // Don't block operations on failure
+      console.error("Audit log error:", err); // Don't block operations on failure
   }
 };
 

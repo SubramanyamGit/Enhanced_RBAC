@@ -13,9 +13,9 @@ const connection = mysql.createPool({
 connection.connect;
 (err) => {
   if (err) {
-    return console.log("Error:" + err.message);
+    return   console.log("Error:" + err.message);
   }
-  console.log("Connected to the MySQL server.");
+    console.log("Connected to the MySQL server.");
 };
 
 module.exports = connection;

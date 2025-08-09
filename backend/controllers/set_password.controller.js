@@ -12,7 +12,6 @@ exports.setPassword = async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(req);
     
     await updateUserPassword(req.user.user_id, hashedPassword);
 
@@ -21,7 +20,6 @@ exports.setPassword = async (req, res) => {
       message: "Password updated successfully. Please log in again.",
     });
   } catch (err) {
-    console.error("Error updating password:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 };

@@ -35,7 +35,7 @@ const MenuPage = () => {
         toast.success("Menu deleted");
         refetch();
       } catch {
-        // toast.error("Failed to delete menu");
+        // toast console.error("Failed to delete menu");
       }
     }
   };

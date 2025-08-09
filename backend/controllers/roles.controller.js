@@ -13,7 +13,7 @@ exports.getRoles = async (req, res) => {
 
     res.json(roles);
   } catch (err) {
-    console.error("Get Roles Error:", err);
+      console.error("Get Roles Error:", err);
     res.status(500).json({ error: "Failed to fetch roles" });
   }
 };
@@ -38,7 +38,7 @@ exports.getRoleById = async (req, res) => {
 
     res.json(role);
   } catch (err) {
-    console.error("Get Role By ID Error:", err);
+      console.error("Get Role By ID Error:", err);
     res.status(500).json({ error: "Failed to fetch role" });
   }
 };
@@ -61,7 +61,7 @@ exports.createRole = async (req, res) => {
       role_id: result.role_id,
     });
   } catch (err) {
-    console.error("Create Role Error:", err);
+      console.error("Create Role Error:", err);
     if (err.code === "DUPLICATE_ROLE") {
       return res.status(409).json({ error: err.message });
     }
@@ -94,7 +94,7 @@ exports.updateRole = async (req, res) => {
 
     res.json({ success: true, message: "Role updated successfully" });
   } catch (err) {
-    console.error("Update Role Error:", err);
+      console.error("Update Role Error:", err);
     if (err.code === "DUPLICATE_ROLE") {
       return res.status(409).json({ error: err.message });
     }
@@ -114,7 +114,7 @@ exports.deleteRole = async (req, res) => {
 
     res.json({ success: true, message: "Role deleted successfully" });
   } catch (err) {
-    console.error("Delete Role Error:", err);
+      console.error("Delete Role Error:", err);
     res.status(500).json({ error: "Failed to delete role" });
   }
 };

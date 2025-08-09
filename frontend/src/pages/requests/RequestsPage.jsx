@@ -61,7 +61,7 @@ const RequestPage = () => {
       setExpiresAt("");
       setSelectedPermission(null);
     } catch {
-      // toast.error("Failed to submit");
+      // toast console.error("Failed to submit");
     }
   };
 
@@ -72,7 +72,6 @@ const RequestPage = () => {
 
   const handleActionConfirm = async () => {
     const { type, row } = actionModal;
-console.log(row.requested_by);
 
     const payload = {
       id: row.request_id,
@@ -80,7 +79,6 @@ console.log(row.requested_by);
       permission_id: row.permission_id,
       permission_name: row.permission_name,
     };
-console.log(payload);
 
     try {
       if (type === "approve") {
@@ -99,7 +97,7 @@ console.log(payload);
       }
       setActionModal({ show: false, type: "", row: null });
     } catch {
-      // toast.error("Action failed");
+      // toast console.error("Action failed");
     }
   };
 
@@ -219,6 +217,7 @@ console.log(payload);
               <Form.Label>Expires At</Form.Label>
               <Form.Control
                 type="datetime-local"
+                min={new Date().toISOString().slice(0, 16)} // disables past dates/times
                 value={expiresAt}
                 onChange={(e) => setExpiresAt(e.target.value)}
               />

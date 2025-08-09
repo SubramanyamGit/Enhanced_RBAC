@@ -13,7 +13,7 @@ exports.getPermissions = async (req, res) => {
 
     res.json(permissions);
   } catch (err) {
-    console.error("Get Permissions Error:", err);
+      console.error("Get Permissions Error:", err);
     res.status(500).json({ error: 'Failed to fetch permissions' });
   }
 };
@@ -34,7 +34,7 @@ exports.getPermissionById = async (req, res) => {
 
     res.json(permission);
   } catch (err) {
-    console.error("Get Permission By ID Error:", err);
+      console.error("Get Permission By ID Error:", err);
     res.status(500).json({ error: 'Failed to fetch permission' });
   }
 };
@@ -57,7 +57,7 @@ exports.createPermission = async (req, res) => {
       permission_id: result.permission_id,
     });
   } catch (err) {
-    console.error("Create Permission Error:", err);
+      console.error("Create Permission Error:", err);
 
     if (err.code === 'DUPLICATE_PERMISSION') {
       return res.status(409).json({ error: err.message });
@@ -81,7 +81,7 @@ exports.updatePermission = async (req, res) => {
 
     res.json({ success: true, message: 'Permission updated successfully' });
   } catch (err) {
-    console.error("Update Permission Error:", err);
+      console.error("Update Permission Error:", err);
 
     if (err.code === 'DUPLICATE_PERMISSION') {
       return res.status(409).json({ error: err.message });
@@ -103,7 +103,7 @@ exports.deletePermission = async (req, res) => {
 
     res.json({ success: true, message: 'Permission deleted successfully' });
   } catch (err) {
-    console.error("Delete Permission Error:", err);
+      console.error("Delete Permission Error:", err);
     res.status(500).json({ error: 'Failed to delete permission' });
   }
 };

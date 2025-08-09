@@ -28,6 +28,7 @@ export const useAxiosInterceptor = () => {
       }
     );
 
-    return () => axiosInstanceWithToken.interceptors.response.eject(interceptor);
+    return () =>
+      axiosInstanceWithToken.interceptors.response.eject(interceptor);
   }, [logout]);
 };

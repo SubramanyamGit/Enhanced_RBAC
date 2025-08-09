@@ -17,6 +17,7 @@ import DepartmentsPage from "./pages/departments/DepartmentsPage";
 import PermissionsPage from "./pages/permissions/PermissionsPage";
 import MenuPage from "./pages/menu/MenuPage";
 import RequestPage from "./pages/requests/RequestsPage";
+import AuditLogPage from "./pages/audit_log/AuditLogPage";
 
 function App() {
   const { token } = useAuth();
@@ -52,6 +53,7 @@ function App() {
           <Route path="admin/menus" element={<MenuPage />} />
           <Route path="permissions" element={<PermissionsPage />} />
           <Route path="requests" element={<RequestPage />} />
+          <Route path="/admin/audit_logs" element={<AuditLogPage/>}/>
         </Route>
       </Routes>
       <ToastContainer position="top-right" autoClose={3000} />

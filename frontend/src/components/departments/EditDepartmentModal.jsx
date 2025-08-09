@@ -35,7 +35,7 @@ const EditDepartmentModal = ({ show, department, onClose, onSuccess }) => {
       toast.success('Department updated successfully');
       onSuccess();
     } catch (err) {
-      // toast.error('Failed to update department');
+      // toast console.error('Failed to update department');
     }
   };
 

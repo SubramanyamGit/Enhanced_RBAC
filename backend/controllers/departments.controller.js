@@ -13,7 +13,6 @@ exports.getDepartments = async (req, res) => {
 
     res.json(departments);
   } catch (err) {
-    console.error("Get Departments Error:", err);
     res.status(500).json({ error: "Failed to fetch departments" });
   }
 };
@@ -54,7 +53,6 @@ exports.createDepartment = async (req, res) => {
       department_id: result.department_id,
     });
   } catch (err) {
-    console.error("Create Department Error:", err);
     if (err.code === "DUPLICATE_DEPARTMENT") {
       return res.status(409).json({ error: err.message });
     }
@@ -77,7 +75,6 @@ exports.updateDepartment = async (req, res) => {
 
     res.json({ success: true, message: "Department updated successfully" });
   } catch (err) {
-    console.error("Update Department Error:", err);
     if (err.code === "DUPLICATE_DEPARTMENT") {
       return res.status(409).json({ error: err.message });
     }
@@ -99,7 +96,6 @@ exports.deleteDepartment = async (req, res) => {
 
     res.json({ success: true, message: "Department deleted successfully" });
   } catch (err) {
-    console.error("Delete Department Error:", err);
     res.status(500).json({ error: "Failed to delete department" });
   }
 };

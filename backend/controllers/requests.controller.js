@@ -17,7 +17,7 @@ exports.getRequests = async (req, res) => {
 
     res.json(requests);
   } catch (err) {
-    console.error("Error fetching requests:", err);
+      console.error("Error fetching requests:", err);
     res.status(500).json({ error: "Failed to fetch requests" });
   }
 };
@@ -38,13 +38,13 @@ exports.createRequest = async (req, res) => {
       details: { permission_id, reason, expires_at },
     });
 
-    console.log("");
+      console.log("");
 
     // Get admin role ID dynamically
     const [[roleRow]] = await db.query(
       `SELECT role_id FROM roles WHERE name = 'Admin'`
     );
-    console.log("roleRow", roleRow);
+      console.log("roleRow", roleRow);
 
     const adminRoleId = roleRow?.role_id;
 
@@ -60,7 +60,7 @@ exports.createRequest = async (req, res) => {
       [adminRoleId]
     );
 
-    console.log("admins", admins);
+      console.log("admins", admins);
 
     // Notify admins
     await Promise.all(
@@ -80,7 +80,7 @@ exports.createRequest = async (req, res) => {
       .status(201)
       .json({ message: "Request submitted", request_id: result.request_id });
   } catch (err) {
-    console.log(err);
+      console.log(err);
 
     res.status(500).json({ error: "Failed to create request" });
   }
@@ -126,7 +126,7 @@ exports.approveRequest = async (req, res) => {
 
     res.json({ message: "Request approved" });
   } catch (err) {
-    console.error(err);
+      console.error(err);
     res.status(500).json({ error: err.message || "Failed to approve request" });
   }
 };

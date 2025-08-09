@@ -11,7 +11,6 @@ exports.getMenus = async (req, res) => {
     });
     res.json(menus);
   } catch (err) {
-    console.error("Get Menus Error:", err);
     res.status(500).json({ error: 'Failed to fetch menus' });
   }
 };
@@ -32,7 +31,6 @@ exports.createMenu = async (req, res) => {
       id: result.id
     });
   } catch (err) {
-    console.error("Create Menu Error:", err);
     if (err.code === 'DUPLICATE_MENU_KEY') {
       return res.status(409).json({ error: err.message });
     }
@@ -52,7 +50,6 @@ exports.updateMenu = async (req, res) => {
 
     res.json({ success: true, message: 'Menu updated successfully' });
   } catch (err) {
-    console.error("Update Menu Error:", err);
     if (err.code === 'DUPLICATE_MENU_KEY') {
       return res.status(409).json({ error: err.message });
     }
@@ -72,7 +69,6 @@ exports.deleteMenu = async (req, res) => {
 
     res.json({ success: true, message: 'Menu deleted successfully' });
   } catch (err) {
-    console.error("Delete Menu Error:", err);
     res.status(500).json({ error: 'Failed to delete menu' });
   }
 };

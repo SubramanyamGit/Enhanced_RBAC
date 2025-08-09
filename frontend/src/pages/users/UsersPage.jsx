@@ -18,7 +18,6 @@ const UsersPage = () => {
   const canEdit = user?.permissions?.users?.includes("edit_users");
   const canDelete = user?.permissions?.users?.includes("delete_users");
   const canCreate = user?.permissions?.users?.includes("create_users");
-  console.log(canDelete);
 
   const columns = [
     { header: "Name", accessor: "full_name" },
@@ -36,7 +35,6 @@ const UsersPage = () => {
   };
 
   const handleDelete = async (row) => {
-    console.log("DELETE");
     if (window.confirm(`Are you sure you want to delete ${row.full_name}?`)) {
       try {
         await deleteUserMutation.mutateAsync(row.user_id);

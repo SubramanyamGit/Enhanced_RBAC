@@ -13,7 +13,6 @@ exports.getMyPermissions = async (req, res) => {
     const userInfo = await userModel.getUserPermissions(token);
     res.json(userInfo);
   } catch (err) {
-    console.error("Permission error:", err);
     res.status(403).json({ error: err.message || "Invalid token" });
   }
 };
@@ -30,7 +29,6 @@ exports.getUsers = async (req, res) => {
 
     res.json(users);
   } catch (err) {
-    console.error("Get Users Error:", err);
     res.status(500).json({ error: "Failed to fetch users" });
   }
 };
@@ -48,7 +46,6 @@ exports.getUserById = async (req, res) => {
 
     res.json(user);
   } catch (err) {
-    console.error("Get User By ID Error:", err);
     res.status(500).json({ error: "Failed to fetch user" });
   }
 };
@@ -96,7 +93,6 @@ exports.createUser = async (req, res) => {
       userId: result.userId,
     });
   } catch (err) {
-    console.error("Create User Error:", err);
 
     if (err.code === "DUPLICATE_USER_EMAIL") {
       return res.status(409).json({ error: err.message });
@@ -127,7 +123,6 @@ exports.updateUser = async (req, res) => {
 
     res.json({ success: true, message: "User updated successfully" });
   } catch (err) {
-    console.error("Update User Error:", err);
     res.status(500).json({ error: "Failed to update user" });
   }
 };
@@ -146,7 +141,6 @@ exports.deleteUser = async (req, res) => {
 
     res.json({ success: true, message: "User deleted successfully" });
   } catch (err) {
-    console.error("Delete User Error:", err);
     res.status(500).json({ error: "Failed to delete user" });
   }
 };

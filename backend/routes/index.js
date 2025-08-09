@@ -8,7 +8,7 @@ const requests = require("./requests");
 const set_password = require("./set_password");
 
 // const permissionRequests = require("./permission_requests");
-// const auditLogs = require("./audit_logs");
+const auditLogs = require("./audit_logs");
 
 module.exports.initialize = (app) => {
   app.use("/users", users);
@@ -19,7 +19,5 @@ module.exports.initialize = (app) => {
   app.use("/menus", menu);
   app.use("/requests", requests);
   app.use("/auth/set_password", set_password);
-
-  // app.use("/permission_requests", permissionRequests);
-  // app.use("/audit_logs", auditLogs);
+  app.use("/audit_logs", auditLogs);
 };

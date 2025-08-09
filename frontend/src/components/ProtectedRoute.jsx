@@ -3,7 +3,6 @@ import { useAuth } from "../context/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
   const { token, isPasswordChanged } = useAuth();
-console.log("TOKEN",token,isPasswordChanged);
 
   if (!token) {
     return <Navigate to="/signin" replace />;
