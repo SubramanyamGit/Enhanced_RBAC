@@ -1,4 +1,5 @@
 import { Navbar, Container, Dropdown } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import '../styles/layout.css';
 
@@ -9,9 +10,15 @@ const TopNavbar = () => {
   return (
     <Navbar className="navbar-custom bg-custom-blue text-white px-4 w-100" expand="lg">
       <Container fluid className="justify-content-between align-items-center">
-        <Navbar.Brand className="text-white fw-bold">RBAC System</Navbar.Brand>
+        <Navbar.Brand
+          as={Link}
+          to="/dashboard"
+          className="text-white fw-bold"
+          style={{ textDecoration: "none" }}
+        >
+          RBAC System
+        </Navbar.Brand>
 
-        {/* Avatar Dropdown */}
         <Dropdown align="end">
           <Dropdown.Toggle
             as="div"
