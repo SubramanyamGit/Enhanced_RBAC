@@ -24,9 +24,6 @@ const TopNavbar = () => {
           <Dropdown.Menu>
             <Dropdown.Item disabled>{user?.full_name}</Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item onClick={() => alert("Profile coming soon")}>
-              Profile
-            </Dropdown.Item>
             <Dropdown.Item onClick={logout}>Logout</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
